@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace TenmoServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class AccountController : ControllerBase
     {
         private readonly IAccountSqlDao accountDao;
@@ -19,13 +21,18 @@ namespace TenmoServer.Controllers
         {
             accountDao = _accountDao;
         }
-
-        [HttpGet("/{}")]
-        public decimal AccountBalance(string username)
+        [Authorize]
+        [HttpGet]
+        public decimal AccountBalance()
         {
+            string username = User.FindFirst("name")?.Value;
+            decimal userBalance = accountDao.GetBalance(username);
 
-            Balance userBalance = accountDao.GetBalance(username);
-            return 
+            return userBalance;
+            
+            
         }
+        
+        
     }
 }

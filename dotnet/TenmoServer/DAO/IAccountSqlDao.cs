@@ -8,8 +8,8 @@ namespace TenmoServer.DAO
 {
     public interface IAccountSqlDao
     {
-        AccountSqlDao GetBalance(string username);
-
+        decimal GetBalance(string username);
+        
 
         //below is the example from the IUserDao, we will need something similar
         //User GetUser(string username);
