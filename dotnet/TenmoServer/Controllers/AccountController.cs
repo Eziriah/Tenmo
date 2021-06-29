@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TenmoServer.DAO;
 
 namespace TenmoServer.Controllers
 {
@@ -11,6 +12,10 @@ namespace TenmoServer.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        //need dao & route
+        private readonly IAccountSqlDao accountDao;
+        public AccountController(IAccountSqlDao _accountDao)
+        {
+            accountDao = _accountDao;
+        }
     }
 }
