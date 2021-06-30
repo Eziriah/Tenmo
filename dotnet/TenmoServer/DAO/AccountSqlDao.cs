@@ -39,5 +39,8 @@ namespace TenmoServer.DAO
           
         }
         //creating method for transferring money
+        //our sql command needs to be a transaction (all or nothing)
+        //make sure transfer amt <= balance
+
     }
 }

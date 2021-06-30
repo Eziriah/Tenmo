@@ -88,11 +88,11 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 1)
                 {
-                    Console.WriteLine($"Your current balance is: ${authService.GetBalance()}");
+                    Console.WriteLine($"Your current balance is: ${accountService.GetBalance()}");
                 }
                 else if (menuSelection == 2)
                 {
-
+                    
                 }
                 else if (menuSelection == 3)
                 {
@@ -100,7 +100,14 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 4)
                 {
+                    List<OtherUser> otherUsers = accountService.GetUserList();
+                    Console.WriteLine($"Here are available users:");
+                    foreach (OtherUser users in otherUsers)
+                    {
+                        Console.WriteLine($"{users.UserId}, {users.Username}");
+                    }
 
+                    
                 }
                 else if (menuSelection == 5)
                 {

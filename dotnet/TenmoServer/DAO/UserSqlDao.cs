@@ -72,6 +72,21 @@ namespace TenmoServer.DAO
 
             return returnUsers;
         }
+        //below method is used to display users in order to select recipient for transfer
+        public List<User> GetUsersNameAndId()
+        {
+
+            List<User> returnUsers = GetUsers();
+            List<User> nameIdList = new List<User>();
+            foreach (User user in returnUsers)
+            {
+                User newUser = new User();
+                newUser.UserId = user.UserId;
+                newUser.Username = user.Username;
+                nameIdList.Add(newUser);
+            }
+            return nameIdList;
+        }
 
         public User AddUser(string username, string password)
         {
