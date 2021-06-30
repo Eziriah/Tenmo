@@ -25,7 +25,7 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT @balance FROM accounts a JOIN users u ON u.user_id = a.user_id WHERE @username = username", conn);
+                    SqlCommand cmd = new SqlCommand("SELECT balance FROM accounts a JOIN users u ON u.user_id = a.user_id WHERE @username = username", conn);
                     cmd.Parameters.AddWithValue("@username", username);
                     decimal balance = Convert.ToDecimal(cmd.ExecuteScalar());
                     return balance;
@@ -38,5 +38,6 @@ namespace TenmoServer.DAO
             }
           
         }
+        //creating method for transferring money
     }
 }

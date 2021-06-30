@@ -120,9 +120,5 @@ namespace TenmoServer.DAO
             return u;
         }
 
-        //step 3) create method to display balance using SQL
-        //might need to create an AccountDAO / interface
-    
-
     }
 }

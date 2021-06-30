@@ -11,7 +11,7 @@ using TenmoServer.Security;
 
 namespace TenmoServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     
     public class AccountController : ControllerBase
@@ -25,20 +25,11 @@ namespace TenmoServer.Controllers
         [HttpGet]
         public decimal AccountBalance()
         {
-            string username = User.FindFirst("name")?.Value;
+            string username = User.Identity.Name;
             decimal userBalance = accountDao.GetBalance(username);
-            
             return userBalance;
             
-            
         }
-
-        [HttpGet("whoami")]
-        public string WhoAmI()
-        {
-            return User.Identity.Name;
-        }
-
 
     }
 }
