@@ -27,12 +27,18 @@ namespace TenmoServer.Controllers
         {
             string username = User.FindFirst("name")?.Value;
             decimal userBalance = accountDao.GetBalance(username);
-
+            
             return userBalance;
             
             
         }
-        
-        
+
+        [HttpGet("whoami")]
+        public string WhoAmI()
+        {
+            return User.Identity.Name;
+        }
+
+
     }
 }

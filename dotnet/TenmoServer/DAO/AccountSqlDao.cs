@@ -18,6 +18,7 @@ namespace TenmoServer.DAO
         
         public decimal GetBalance(string username)
         {
+            
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
