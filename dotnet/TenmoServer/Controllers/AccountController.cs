@@ -38,8 +38,15 @@ namespace TenmoServer.Controllers
         public List<User> ListUsers()
         {
             return userDao.GetUsersNameAndId();
-
         }
 
+        //[Authorize]
+        //[HttpPut]
+        //public string TransferTEBucks(int userIdToReceive, decimal amountToTransfer)
+        //{
+        //    string username = User.Identity.Name;
+        //    string result = accountDao.TransferTEBucks(username, userIdToReceive, amountToTransfer);
+        //    return Ok(result);
+        //}
     }
 }

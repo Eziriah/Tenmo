@@ -106,6 +106,8 @@ namespace TenmoClient
                     {
                         Console.WriteLine($"{users.UserId}, {users.Username}");
                     }
+                    Console.WriteLine("Please enter user Id you wish to transfer to: ");
+                    string userIdToTransferTo = Console.ReadLine();
 
                     
                 }
