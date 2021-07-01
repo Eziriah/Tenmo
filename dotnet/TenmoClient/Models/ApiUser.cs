@@ -19,10 +19,20 @@
         public string Username { get; set; }
         public string Password { get; set; }
     }
-
     public class OtherUser
     {
         public string Username { get; set; }
         public string UserId { get; set; }
+    }
+    public class Transfer
+    {
+        public int UserIdToReceive { get; set; }
+        public decimal AmountToTransfer { get; set; }
+
+
+    }
+    public class Account
+    {
+        public decimal Balance { get; set; }
     }
 }

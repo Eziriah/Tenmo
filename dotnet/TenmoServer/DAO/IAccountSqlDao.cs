@@ -10,6 +10,6 @@ namespace TenmoServer.DAO
     {
         decimal GetBalance(string userId);
 
-        void TransferTEBucks(string userIdToSend, int userIdToReceive, decimal amountToTransfer);
+        bool TransferTEBucks(string userIdToSend, int userIdToReceive, decimal amountToTransfer);
     }
 }

@@ -9,6 +9,7 @@ namespace TenmoClient
         private static readonly ConsoleService consoleService = new ConsoleService();
         private static readonly AuthService authService = new AuthService();
         private static readonly AccountService accountService = new AccountService();
+        
 
         static void Main(string[] args)
         {
@@ -108,8 +109,17 @@ namespace TenmoClient
                     }
                     Console.WriteLine("Please enter user Id you wish to transfer to: ");
                     string userIdToTransferTo = Console.ReadLine();
+                    Console.WriteLine("Enter the amount to be transferred");
+                    string transferAmount =  Console.ReadLine();
+ 
 
+                    Transfer transfer = new Transfer();
                     
+                    transfer.UserIdToReceive = int.Parse(userIdToTransferTo);
+                    transfer.AmountToTransfer = Convert.ToDecimal(transferAmount);
+                    accountService.TransferTEBucks();
+                    //,aybe we can mimic a list of users the user can select from and have a readkey 
+
                 }
                 else if (menuSelection == 5)
                 {

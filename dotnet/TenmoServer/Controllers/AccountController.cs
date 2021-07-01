@@ -28,8 +28,8 @@ namespace TenmoServer.Controllers
         [HttpGet]
         public decimal AccountBalance()
         {
-            string username = User.Identity.Name;
-            decimal userBalance = accountDao.GetBalance(username);
+            string userId = User.FindFirst("sub")?.Value;
+            decimal userBalance = accountDao.GetBalance(userId);
             return userBalance;
             
         }
@@ -40,13 +40,14 @@ namespace TenmoServer.Controllers
             return userDao.GetUsersNameAndId();
         }
 
-        //[Authorize]
-        //[HttpPut]
-        //public string TransferTEBucks(int userIdToReceive, decimal amountToTransfer)
-        //{
-        //    string username = User.Identity.Name;
-        //    string result = accountDao.TransferTEBucks(username, userIdToReceive, amountToTransfer);
-        //    return Ok(result);
-        //}
+        [Authorize]
+        [HttpPut]
+        public bool TransferTEBucks(Transfer transfer)
+        {
+            string userId = User.FindFirst("sub")?.Value;
+
+            bool result = accountDao.TransferTEBucks(userId, transfer.UserIdToReceive, transfer.AmountToTransfer);
+            return result;
+        }
     }
 }

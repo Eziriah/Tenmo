@@ -9,4 +9,15 @@ namespace TenmoServer.Models
     {
         public decimal Balance { get; set; }
     }
+
+
+
+    public class Transfer
+    {
+        public int UserIdToReceive { get; set; }
+        public decimal AmountToTransfer { get; set; }
+
+        
+
+    }
 }
