@@ -104,7 +104,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public List<Transaction> DisplayTransactions(string userId)
+        public List<Transaction> DisplayTransactions(string userId)// we could possibly use this list to pull our pending transactions as well with transfer type id 
         {
             List<Transaction> allTransactions = new List<Transaction>();
             try
@@ -148,8 +148,58 @@ namespace TenmoServer.DAO
             {
                 throw;
             }
+
+
+
         }
-    }
+
+
+
+        public List<Transaction> PendingTransactions(string userId)//based on transfer type id 
+        {
+            List<Transaction> pendingTransactions = new List<Transaction>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT t.transfer_id, t.transfer_type_id, t.transfer_status_id, t.account_from, t.account_to, t.amount, u.username AS sender_username, us.username AS recipient_username " +
+                                                    "FROM transfers t " +
+                                                    "JOIN accounts a ON t.account_from = a.account_id " +
+                                                    "JOIN accounts ac ON t.account_to = ac.account_id " +
+                                                    "JOIN users u ON a.user_id = u.user_id " +
+                                                    "JOIN users us ON ac.user_id = us.user_id " +
+                                                    "WHERE account_from = (SELECT account_id FROM accounts WHERE user_id = @userId) OR account_to = (SELECT account_id FROM accounts WHERE user_id = @userId); ", conn);
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        {
+                            Transaction transaction = new Transaction()
+                            {
+                                TransferType = Convert.ToInt32(reader["transfer_type_id"]),
+                                TransferStatus = Convert.ToInt32(reader["transfer_status_id"]),
+                                AccountFrom = Convert.ToInt32(reader["account_from"]),
+                                AccountTo = Convert.ToInt32(reader["account_to"]),
+                                AmountTransfered = Convert.ToInt32(reader["amount"]),
+                                SenderName = Convert.ToString(reader["sender_username"]),
+                                RecipientName = Convert.ToString(reader["recipient_username"]),
+                                TransferId = Convert.ToInt32(reader["transfer_id"])
+                            };
+
+                            pendingTransactions.Add(transaction);
+                        }
+                    }
+                    return pendingTransactions;
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+        }
 
 }
 

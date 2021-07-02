@@ -144,7 +144,7 @@ namespace TenmoClient
                         Console.WriteLine("transaction declined");
                     }
                 }
-                else if (menuSelection == 5)//request money (list of users, amount to send. move to new pending trans. list)
+                else if (menuSelection == 5)//request money//(list of users, amount to send. move to new pending trans. list)
                 {
                     List<OtherUser> requests = accountService.GetUserList();
                 }
