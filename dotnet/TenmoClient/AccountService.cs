@@ -73,7 +73,7 @@ namespace TenmoClient
         }
 
 
-        public bool TransferTEBucks()
+        public bool TransferTEBucks(Transfer transfer)
         {
 
             RestRequest request = new RestRequest(API_BASE_URL + "account");
@@ -82,7 +82,7 @@ namespace TenmoClient
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
                 Console.WriteLine("An error occurred communicating with the server.");
-                return false ;
+                return false;
             }
             else if (!response.IsSuccessful)
             {

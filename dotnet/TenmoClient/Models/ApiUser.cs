@@ -29,7 +29,6 @@
         public int UserIdToReceive { get; set; }
         public decimal AmountToTransfer { get; set; }
 
-
     }
     public class Account
     {
