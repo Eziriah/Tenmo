@@ -49,5 +49,12 @@ namespace TenmoServer.Controllers
             bool result = accountDao.TransferTEBucks(userId, transfer.UserIdToReceive, transfer.AmountToTransfer);
             return result;
         }
+        [Authorize]
+        [HttpGet("transfer")]
+        public List<Transaction> DisplayTransactions()
+        {
+            string userId = User.FindFirst("sub")?.Value;
+            return accountDao.DisplayTransactions(userId);
+        }
     }
 }

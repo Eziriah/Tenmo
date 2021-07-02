@@ -93,7 +93,13 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 2)
                 {
+                    accountService.GetTransactions();
+                    List<Transaction> transactionsList = accountService.GetTransactions();
                     
+                    foreach (Transaction transaction in transactionsList)
+                    {
+                        Console.WriteLine($"Account from: {transaction.SenderName}\n Account to: {transaction.RecipientName}\n Amount Transfered: {transaction.AmountTransfered}\n Status: {transaction.StatusString}\n Type of transfer: {transaction.TypeString} \n");
+                    }
                 }
                 else if (menuSelection == 3)
                 {
@@ -101,12 +107,14 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 4)
                 {
+                    //TODO: remove current user from list displayed back
                     List<OtherUser> otherUsers = accountService.GetUserList();
                     Console.WriteLine($"Here are available users:");
                     foreach (OtherUser users in otherUsers)
                     {
                         Console.WriteLine($"{users.UserId}, {users.Username}");
                     }
+                    //TODO: handle bad input
                     Console.WriteLine("Please enter user Id you wish to transfer to: ");
                     string userIdToTransferTo = Console.ReadLine();
                     Console.WriteLine("Enter the amount to be transferred");
@@ -115,15 +123,16 @@ namespace TenmoClient
                     Transfer transfer = new Transfer();
                     transfer.UserIdToReceive = int.Parse(userIdToTransferTo);
                     transfer.AmountToTransfer = Convert.ToDecimal(transferAmount);
+                   
                     if (accountService.TransferTEBucks(transfer))
                     {
-                        Console.WriteLine("Successful Transaction");
+                        Console.WriteLine("successful transaction");
                     }
                     else
                     {
-                        Console.WriteLine("Transaction declined");
+                        Console.WriteLine("transaction declined");
                     }
-                    
+
                     //,aybe we can mimic a list of users the user can select from and have a readkey 
 
                 }

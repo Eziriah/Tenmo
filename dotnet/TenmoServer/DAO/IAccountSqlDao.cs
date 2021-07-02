@@ -11,5 +11,7 @@ namespace TenmoServer.DAO
         decimal GetBalance(string userId);
 
         bool TransferTEBucks(string userIdToSend, int userIdToReceive, decimal amountToTransfer);
+
+        List<Transaction> DisplayTransactions(string userId);
     }
 }

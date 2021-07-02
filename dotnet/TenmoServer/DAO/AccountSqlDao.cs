@@ -15,7 +15,7 @@ namespace TenmoServer.DAO
         {
             connectionString = dbConnectionString;
         }
-        
+
         public decimal GetBalance(string userId)
         {
             try
@@ -35,12 +35,13 @@ namespace TenmoServer.DAO
 
                 throw;
             }
-          
+
         }
         //creating method for transferring money
         public bool TransferTEBucks(string userIdToSend, int userIdToReceive, decimal amountToTransfer)
         {
-
+            int transferType = 2;
+            int transferStatus = 2;
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -67,8 +68,8 @@ namespace TenmoServer.DAO
                         return false;// "You don't have enough TE Bucks to make this transfer!";
                     }
                 }
+                AddTransaction(userIdToSend, userIdToReceive, amountToTransfer, transferType, transferStatus);
                 return true;//"Successful Transfer"; 
-                
             }
             catch (Exception)
             {
@@ -76,8 +77,78 @@ namespace TenmoServer.DAO
                 throw;
             }
         }
-        //our sql command needs to be a transaction (all or nothing)
-        //make sure transfer amt <= balance
 
+        public void AddTransaction(string userIdToSend, int userIdToReceive, decimal amountToTransfer, int transferType, int transferStatus)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                                                            "VALUES(@transferType, @transferStatus, (SELECT account_id FROM accounts WHERE user_id = @userIdToSend), " +
+                                                            "(SELECT account_id FROM accounts WHERE user_id = @userIdToReceive), @amountToTransfer); ", conn);
+                    cmd.Parameters.AddWithValue("@userIdToSend", userIdToSend);
+                    cmd.Parameters.AddWithValue("@userIdToReceive", userIdToReceive);
+                    cmd.Parameters.AddWithValue("@amountToTransfer", amountToTransfer);
+                    cmd.Parameters.AddWithValue("@transferType", transferType);
+                    cmd.Parameters.AddWithValue("@transferStatus", transferStatus);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public List<Transaction> DisplayTransactions(string userId)
+        {
+            List<Transaction> allTransactions = new List<Transaction>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT t.transfer_type_id, t.transfer_status_id, t.account_from, t.account_to, t.amount, u.username AS sender_username, us.username AS recipient_username " +
+                                                    "FROM transfers t " +
+                                                    "JOIN accounts a ON t.account_from = a.account_id " +
+                                                    "JOIN accounts ac ON t.account_to = ac.account_id " +
+                                                    "JOIN users u ON a.user_id = u.user_id " +
+                                                    "JOIN users us ON ac.user_id = us.user_id " +
+                                                    "WHERE account_from = (SELECT account_id FROM accounts WHERE user_id = @userId) OR account_to = (SELECT account_id FROM accounts WHERE user_id = @userId); ", conn);
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        {
+                            Transaction transaction = new Transaction()
+                            {
+                                TransferType = Convert.ToInt32(reader["transfer_type_id"]),
+                                TransferStatus = Convert.ToInt32(reader["transfer_status_id"]),
+                                AccountFrom = Convert.ToInt32(reader["account_from"]),
+                                AccountTo = Convert.ToInt32(reader["account_to"]),
+                                AmountTransfered = Convert.ToInt32(reader["amount"]),
+                                SenderName = Convert.ToString(reader["sender_username"]),
+                                RecipientName = Convert.ToString(reader["recipient_username"])
+                            };
+
+                            allTransactions.Add(transaction);
+                        }
+                    }
+                    return allTransactions;
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+        }
     }
+
 }
+
