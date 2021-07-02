@@ -61,6 +61,8 @@ namespace TenmoServer.Models
         public decimal AmountTransfered { get; set; }
         public string SenderName { get; set; }
         public string RecipientName { get; set; }
+        public int TransferId { get; set; }
+
 
     }
 }

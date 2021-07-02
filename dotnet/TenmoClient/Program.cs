@@ -95,15 +95,26 @@ namespace TenmoClient
                 {
                     accountService.GetTransactions();
                     List<Transaction> transactionsList = accountService.GetTransactions();
+                    Console.WriteLine("Transfers\n ID   From:   To:    Amount:" );
                     
                     foreach (Transaction transaction in transactionsList)
                     {
-                        Console.WriteLine($"Account from: {transaction.SenderName}\n Account to: {transaction.RecipientName}\n Amount Transfered: {transaction.AmountTransfered}\n Status: {transaction.StatusString}\n Type of transfer: {transaction.TypeString} \n");
+                        Console.WriteLine($"{transaction.TransferId} {transaction.SenderName}  {transaction.RecipientName} {transaction.AmountTransfered}\n");
+                        
+                        //Console.WriteLine($"{transaction.TransferId} Account from: {transaction.SenderName}\n Account to: {transaction.RecipientName}\n Amount Transfered: {transaction.AmountTransfered}\n Status: {transaction.StatusString}\n Type of transfer: {transaction.TypeString} \n");
+                    }
+                    int transferInt = consoleService.PromptForTransferID("To view");
+                    foreach (Transaction transaction in transactionsList)
+                    {
+                        if (transaction.TransferId == transferInt)
+                        {
+                            Console.WriteLine($"TransferId: {transaction.TransferId}\nFrom: {transaction.SenderName}\nTo: {transaction.RecipientName}\nAmount Transferred: {transaction.AmountTransfered}\nStatus: {transaction.StatusString}\nType of transfer: {transaction.TypeString} \n");
+                        }
                     }
                 }
-                else if (menuSelection == 3)
+                else if (menuSelection == 3)//view pending(only what has been requested from ther users) 
                 {
-
+                    
                 }
                 else if (menuSelection == 4)
                 {
@@ -132,13 +143,10 @@ namespace TenmoClient
                     {
                         Console.WriteLine("transaction declined");
                     }
-
-                    //,aybe we can mimic a list of users the user can select from and have a readkey 
-
                 }
-                else if (menuSelection == 5)
+                else if (menuSelection == 5)//request money (list of users, amount to send. move to new pending trans. list)
                 {
-
+                    List<OtherUser> requests = accountService.GetUserList();
                 }
                 else if (menuSelection == 6)
                 {

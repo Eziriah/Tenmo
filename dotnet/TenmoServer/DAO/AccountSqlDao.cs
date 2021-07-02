@@ -113,7 +113,7 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT t.transfer_type_id, t.transfer_status_id, t.account_from, t.account_to, t.amount, u.username AS sender_username, us.username AS recipient_username " +
+                    SqlCommand cmd = new SqlCommand("SELECT t.transfer_id, t.transfer_type_id, t.transfer_status_id, t.account_from, t.account_to, t.amount, u.username AS sender_username, us.username AS recipient_username " +
                                                     "FROM transfers t " +
                                                     "JOIN accounts a ON t.account_from = a.account_id " +
                                                     "JOIN accounts ac ON t.account_to = ac.account_id " +
@@ -134,7 +134,8 @@ namespace TenmoServer.DAO
                                 AccountTo = Convert.ToInt32(reader["account_to"]),
                                 AmountTransfered = Convert.ToInt32(reader["amount"]),
                                 SenderName = Convert.ToString(reader["sender_username"]),
-                                RecipientName = Convert.ToString(reader["recipient_username"])
+                                RecipientName = Convert.ToString(reader["recipient_username"]),
+                                TransferId = Convert.ToInt32(reader["transfer_id"])
                             };
 
                             allTransactions.Add(transaction);
