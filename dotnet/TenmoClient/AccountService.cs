@@ -73,11 +73,7 @@ namespace TenmoClient
         }
 
 
-<<<<<<< HEAD
-        public Transfer TransferTEBucks(Transfer transfer)
-=======
         public bool TransferTEBucks(Transfer transfer)
->>>>>>> d1cfd824ccd206eef438fe631a1c601b7594b4fe
         {
 
             RestRequest request = new RestRequest(API_BASE_URL + "account");
@@ -87,29 +83,26 @@ namespace TenmoClient
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
                 Console.WriteLine("An error occurred communicating with the server.");
-<<<<<<< HEAD
-                return null ;
-=======
+
                 return false;
->>>>>>> d1cfd824ccd206eef438fe631a1c601b7594b4fe
             }
             else if (!response.IsSuccessful)
             {
                 if (response == null)
                 {
                     Console.WriteLine("An error message was received: " + response);
-                    return null;
+                    return false;
                 }
                 else
                 {
                     Console.WriteLine("An error response was received from the server. The status code is " + (int)response.StatusCode);
-                    return null;
+                    return false;
                 }
             }
             else
             {
                 //return response;
-                return transfer;
+                return true;
             }
 
         }

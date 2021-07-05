@@ -25,6 +25,34 @@ namespace TenmoClient
                 return transferId;
             }
         }
+        public int PromptForUserID(string action)
+        {
+            Console.WriteLine("");
+            Console.Write("Please enter transfer ID to " + action + " (0 to cancel): ");
+            if (!int.TryParse(Console.ReadLine(), out int transferId))
+            {
+                Console.WriteLine("Invalid input. Only input a number.");
+                return 0;
+            }
+            else
+            {
+                return transferId;
+            }
+        }
+
+        public decimal GetTransferAmount(string action)
+        {
+            Console.WriteLine(action);
+            if (!decimal.TryParse(Console.ReadLine(), out decimal transferAmount))
+            {
+                Console.WriteLine("Invalid amount. Only input a number.");
+                return 0;
+            }
+            else
+            {
+                return transferAmount;
+            }
+        }
 
         public LoginUser PromptForLogin()
         {

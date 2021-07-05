@@ -30,10 +30,6 @@
         public decimal AmountToTransfer { get; set; }
 
     }
-    public class Account
-    {
-        public decimal Balance { get; set; }
-    }
 
     public class Transaction
     {

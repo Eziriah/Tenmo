@@ -9,7 +9,7 @@ namespace TenmoClient
         private static readonly ConsoleService consoleService = new ConsoleService();
         private static readonly AuthService authService = new AuthService();
         private static readonly AccountService accountService = new AccountService();
-        
+
 
         static void Main(string[] args)
         {
@@ -87,23 +87,23 @@ namespace TenmoClient
                 {
                     Console.WriteLine("Invalid input. Please enter only a number.");
                 }
-                else if (menuSelection == 1)
+                else if (menuSelection == 1) //showing balance
                 {
                     Console.WriteLine($"Your current balance is: ${accountService.GetBalance()}");
                 }
-                else if (menuSelection == 2)
+                else if (menuSelection == 2) //viewing past transfers
                 {
-                    accountService.GetTransactions();
+                    //calling a method to create a list of transactions
                     List<Transaction> transactionsList = accountService.GetTransactions();
-                    Console.WriteLine("Transfers\n ID   From:   To:    Amount:" );
-                    
+                    Console.WriteLine("Transfers\n ID   From:   To:    Amount:");
+                    //printing transactions one at a time
                     foreach (Transaction transaction in transactionsList)
                     {
                         Console.WriteLine($"{transaction.TransferId} {transaction.SenderName}  {transaction.RecipientName} {transaction.AmountTransfered}\n");
-                        
-                        //Console.WriteLine($"{transaction.TransferId} Account from: {transaction.SenderName}\n Account to: {transaction.RecipientName}\n Amount Transfered: {transaction.AmountTransfered}\n Status: {transaction.StatusString}\n Type of transfer: {transaction.TypeString} \n");
                     }
-                    int transferInt = consoleService.PromptForTransferID("To view");
+                    //prompting user input for transaction ID to view more details
+                    int transferInt = consoleService.PromptForTransferID("view");
+                    //checking user input against list of transactions; for a match, will print details
                     foreach (Transaction transaction in transactionsList)
                     {
                         if (transaction.TransferId == transferInt)
@@ -112,30 +112,66 @@ namespace TenmoClient
                         }
                     }
                 }
-                else if (menuSelection == 3)//view pending(only what has been requested from ther users) 
+                else if (menuSelection == 3)//view pending(only what has been requested from other users) 
                 {
-                    
+
                 }
-                else if (menuSelection == 4)
+                else if (menuSelection == 4) //transfer TE Bucks to other users
                 {
-                    //TODO: remove current user from list displayed back
+                    //creating user list (not including ourselves) and printing out
                     List<OtherUser> otherUsers = accountService.GetUserList();
                     Console.WriteLine($"Here are available users:");
                     foreach (OtherUser users in otherUsers)
                     {
                         Console.WriteLine($"{users.UserId}, {users.Username}");
                     }
-                    //TODO: handle bad input
-                    Console.WriteLine("Please enter user Id you wish to transfer to: ");
-                    string userIdToTransferTo = Console.ReadLine();
-                    //TODO: make sure amt is valid
-                    Console.WriteLine("Enter the amount to be transferred");
-                    string transferAmount =  Console.ReadLine();
+                    //getting user input for recipient user ID, making sure input is valid & matches user in DB
+                    int userInt = consoleService.PromptForUserID("view");
+                    bool userMatch = false;
+                    foreach (OtherUser user in otherUsers)
+                    {
+                        if (user.UserId == userInt.ToString())
+                        {
+                            userMatch = true;
+                        }
+                    }
+                    //if user ID from input matches DB:
+                    if (userMatch)
+                    {
+                        //prompting user to enter transfer amt, making sure it is valid
+                        decimal transferAmount = consoleService.GetTransferAmount("Enter the amount to be transferred");
+                        //if amt is valid # and positive
+                        if (transferAmount > 0 )
+                        {
+                            Transfer transfer = new Transfer();
+                            transfer.UserIdToReceive = userInt;
+                            transfer.AmountToTransfer = transferAmount;
+                            //saving current balance 
+                            decimal oldBalance = accountService.GetBalance();
+                            accountService.TransferTEBucks(transfer);
+                            decimal newBalance = accountService.GetBalance();
+                            //comparing balances; if balance unchanged, unsuccessful
+                            if (oldBalance == newBalance)
+                            {
+                                Console.WriteLine("Transaction unsuccessful");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Transaction successful");
+                            }
+                        } 
+                        //amt not valid
+                        else
+                        {
+                            Console.WriteLine("Transfer amount must be greater than $0.00");
+                        }
+                    }
+                    //user ID not valid
+                    else
+                    {
+                        Console.WriteLine("Sorry, user ID invalid");
+                    }
 
-                    Transfer transfer = new Transfer();
-                    transfer.UserIdToReceive = int.Parse(userIdToTransferTo);
-                    transfer.AmountToTransfer = Convert.ToDecimal(transferAmount);
-                   
                 }
                 else if (menuSelection == 5)//request money//(list of users, amount to send. move to new pending trans. list)
                 {

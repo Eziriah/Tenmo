@@ -71,9 +71,10 @@ namespace TenmoServer.DAO
                 AddTransaction(userIdToSend, userIdToReceive, amountToTransfer, transferType, transferStatus);
                 return true;//"Successful Transfer"; 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
+                Console.WriteLine(ex.Message);
                 throw;
             }
         }
