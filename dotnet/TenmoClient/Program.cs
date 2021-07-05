@@ -93,39 +93,53 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 2)
                 {
+                    accountService.GetTransactions();
+                    List<Transaction> transactionsList = accountService.GetTransactions();
+                    Console.WriteLine("Transfers\n ID   From:   To:    Amount:" );
                     
+                    foreach (Transaction transaction in transactionsList)
+                    {
+                        Console.WriteLine($"{transaction.TransferId} {transaction.SenderName}  {transaction.RecipientName} {transaction.AmountTransfered}\n");
+                        
+                        //Console.WriteLine($"{transaction.TransferId} Account from: {transaction.SenderName}\n Account to: {transaction.RecipientName}\n Amount Transfered: {transaction.AmountTransfered}\n Status: {transaction.StatusString}\n Type of transfer: {transaction.TypeString} \n");
+                    }
+                    int transferInt = consoleService.PromptForTransferID("To view");
+                    foreach (Transaction transaction in transactionsList)
+                    {
+                        if (transaction.TransferId == transferInt)
+                        {
+                            Console.WriteLine($"TransferId: {transaction.TransferId}\nFrom: {transaction.SenderName}\nTo: {transaction.RecipientName}\nAmount Transferred: {transaction.AmountTransfered}\nStatus: {transaction.StatusString}\nType of transfer: {transaction.TypeString} \n");
+                        }
+                    }
                 }
-                else if (menuSelection == 3)
+                else if (menuSelection == 3)//view pending(only what has been requested from ther users) 
                 {
-
+                    
                 }
                 else if (menuSelection == 4)
                 {
+                    //TODO: remove current user from list displayed back
                     List<OtherUser> otherUsers = accountService.GetUserList();
                     Console.WriteLine($"Here are available users:");
                     foreach (OtherUser users in otherUsers)
                     {
                         Console.WriteLine($"{users.UserId}, {users.Username}");
                     }
-                    //TODO: make sure user ID valid
+                    //TODO: handle bad input
                     Console.WriteLine("Please enter user Id you wish to transfer to: ");
                     string userIdToTransferTo = Console.ReadLine();
                     //TODO: make sure amt is valid
                     Console.WriteLine("Enter the amount to be transferred");
                     string transferAmount =  Console.ReadLine();
- 
 
                     Transfer transfer = new Transfer();
-                    
                     transfer.UserIdToReceive = int.Parse(userIdToTransferTo);
                     transfer.AmountToTransfer = Convert.ToDecimal(transferAmount);
-                    accountService.TransferTEBucks(transfer);
-                    //,aybe we can mimic a list of users the user can select from and have a readkey 
-
+                   
                 }
-                else if (menuSelection == 5)
+                else if (menuSelection == 5)//request money//(list of users, amount to send. move to new pending trans. list)
                 {
-
+                    List<OtherUser> requests = accountService.GetUserList();
                 }
                 else if (menuSelection == 6)
                 {
