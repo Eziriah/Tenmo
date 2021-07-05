@@ -28,7 +28,7 @@ namespace TenmoClient
         public int PromptForUserID(string action)
         {
             Console.WriteLine("");
-            Console.Write("Please enter transfer ID to " + action + " (0 to cancel): ");
+            Console.Write("Please enter user ID to " + action + " (0 to cancel): ");
             if (!int.TryParse(Console.ReadLine(), out int transferId))
             {
                 Console.WriteLine("Invalid input. Only input a number.");

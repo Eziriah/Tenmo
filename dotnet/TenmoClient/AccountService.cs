@@ -76,7 +76,7 @@ namespace TenmoClient
         public bool TransferTEBucks(Transfer transfer)
         {
 
-            RestRequest request = new RestRequest(API_BASE_URL + "account");
+            RestRequest request = new RestRequest(API_BASE_URL + "account/transfer");
             request.AddJsonBody(transfer);
             client.Authenticator = new JwtAuthenticator(UserService.GetToken());
             IRestResponse<bool> response = client.Put<bool>(request);
@@ -101,15 +101,77 @@ namespace TenmoClient
             }
             else
             {
-                //return response;
                 return true;
             }
-
         }
+
+            //requesting money
+            public bool RequestTEBucks(Transfer transfer)
+            {
+
+                RestRequest request = new RestRequest(API_BASE_URL + "account/request");
+                request.AddJsonBody(transfer);
+                client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+                IRestResponse<bool> response = client.Post<bool>(request);
+                if (response.ResponseStatus != ResponseStatus.Completed)
+                {
+                    Console.WriteLine("An error occurred communicating with the server.");
+
+                    return false;
+                }
+                else if (!response.IsSuccessful)
+                {
+                    if (response == null)
+                    {
+                        Console.WriteLine("An error message was received: " + response);
+                        return false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("An error response was received from the server. The status code is " + (int)response.StatusCode);
+                        return false;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+
+            }
 
         public List<Transaction> GetTransactions()
         {
             RestRequest request = new RestRequest(API_BASE_URL + "account" + "/" + "transfer");
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            IRestResponse<List<Transaction>> response = client.Get<List<Transaction>>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                Console.WriteLine("An error occurred communicating with the server.");
+                return null;
+            }
+            else if (!response.IsSuccessful)
+            {
+                if (response == null)
+                {
+                    Console.WriteLine("An error message was received: " + response);
+                    return null;
+                }
+                else
+                {
+                    Console.WriteLine("An error response was received from the server. The status code is " + (int)response.StatusCode);
+                    return null;
+                }
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
+
+        //display pending transactions
+        public List<Transaction> GetPendingTransactions()
+        {
+            RestRequest request = new RestRequest(API_BASE_URL + "account/transfer/pending");
             client.Authenticator = new JwtAuthenticator(UserService.GetToken());
             IRestResponse<List<Transaction>> response = client.Get<List<Transaction>>(request);
             if (response.ResponseStatus != ResponseStatus.Completed)

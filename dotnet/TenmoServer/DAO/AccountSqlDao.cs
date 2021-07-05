@@ -16,7 +16,7 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public decimal GetBalance(string userId)
+        public decimal GetBalance(int userId)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace TenmoServer.DAO
 
         }
         //creating method for transferring money
-        public bool TransferTEBucks(string userIdToSend, int userIdToReceive, decimal amountToTransfer)
+        public bool TransferTEBucks(int userIdToSend, int userIdToReceive, decimal amountToTransfer)
         {
             int transferType = 2;
             int transferStatus = 2;
@@ -79,7 +79,32 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void AddTransaction(string userIdToSend, int userIdToReceive, decimal amountToTransfer, int transferType, int transferStatus)
+        //requesting money method
+        public bool RequestTEBucks(int userIdToSend, int userIdToReceive, decimal amountToTransfer)
+        {
+            int transferType = 1; //1 is request
+            int transferStatus = 1; //1 is pending
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    AddTransaction(userIdToSend, userIdToReceive, amountToTransfer, transferType, transferStatus);
+
+                }
+                
+                return true;//"Successful Transfer"; 
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        public void AddTransaction(int userIdToSend, int userIdToReceive, decimal amountToTransfer, int transferType, int transferStatus)
         {
             try
             {
@@ -105,7 +130,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public List<Transaction> DisplayTransactions(string userId)// we could possibly use this list to pull our pending transactions as well with transfer type id 
+        public List<Transaction> DisplayTransactions(int userId)// we could possibly use this list to pull our pending transactions as well with transfer type id 
         {
             List<Transaction> allTransactions = new List<Transaction>();
             try
@@ -156,7 +181,7 @@ namespace TenmoServer.DAO
 
 
 
-        public List<Transaction> PendingTransactions(string userId)//based on transfer type id 
+        public List<Transaction> PendingTransactions(int userId)//based on transfer type id 
         {
             List<Transaction> pendingTransactions = new List<Transaction>();
             try
@@ -171,7 +196,8 @@ namespace TenmoServer.DAO
                                                     "JOIN accounts ac ON t.account_to = ac.account_id " +
                                                     "JOIN users u ON a.user_id = u.user_id " +
                                                     "JOIN users us ON ac.user_id = us.user_id " +
-                                                    "WHERE account_from = (SELECT account_id FROM accounts WHERE user_id = @userId) OR account_to = (SELECT account_id FROM accounts WHERE user_id = @userId); ", conn);
+                                                    "WHERE account_from = (SELECT account_id FROM accounts WHERE user_id = @userId) " +
+                                                    "AND t.transfer_status_id = 1; ", conn);
                     cmd.Parameters.AddWithValue("@userId", userId);
                     SqlDataReader reader = cmd.ExecuteReader();
 

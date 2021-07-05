@@ -13,7 +13,7 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    
+    //TODO: make whole class authorize
     public class AccountController : ControllerBase
     {
         private readonly IAccountSqlDao accountDao;
@@ -24,15 +24,17 @@ namespace TenmoServer.Controllers
             userDao = _userDao;
         }
         [Authorize]
-        //account is the route
+        //getting account balance
         [HttpGet]
         public decimal AccountBalance()
         {
-            string userId = User.FindFirst("sub")?.Value;
+            int userId = int.Parse(User.FindFirst("sub")?.Value);
             decimal userBalance = accountDao.GetBalance(userId);
             return userBalance;
             
         }
+
+        //getting a list of users
         [Authorize]
         [HttpGet("userslist")]
         public List<User> ListUsers()
@@ -40,22 +42,45 @@ namespace TenmoServer.Controllers
             string username = User.Identity.Name;
             return userDao.GetUsersNameAndId(username);
         }
-
+        
+        //sending TE Bucks
         [Authorize]
-        [HttpPut]
+        [HttpPut("transfer")]
         public bool TransferTEBucks(Transfer transfer)
         {
-            string userId = User.FindFirst("sub")?.Value;
+            int userId = int.Parse(User.FindFirst("sub")?.Value);
 
             bool result = accountDao.TransferTEBucks(userId, transfer.UserIdToReceive, transfer.AmountToTransfer);
             return result;
         }
+
+        //requesting TE Bucks
+        [Authorize]
+        [HttpPost("request")]
+        public bool RequestTEBucks(Transfer transfer)
+        {
+            int userId = int.Parse(User.FindFirst("sub")?.Value);
+
+            bool result = accountDao.RequestTEBucks(transfer.UserIdToReceive, userId, transfer.AmountToTransfer);
+            return result;
+        }
+
+        //creating a list of transactions
         [Authorize]
         [HttpGet("transfer")]
         public List<Transaction> DisplayTransactions()
         {
-            string userId = User.FindFirst("sub")?.Value;
+            int userId = int.Parse(User.FindFirst("sub")?.Value);
             return accountDao.DisplayTransactions(userId);
+        }
+
+        //display pending transactions
+        [Authorize]
+        [HttpGet("transfer/pending")]
+        public List<Transaction> DisplayPendingTransactions()
+        {
+            int userId = int.Parse(User.FindFirst("sub")?.Value);
+            return accountDao.PendingTransactions(userId);
         }
     }
 }

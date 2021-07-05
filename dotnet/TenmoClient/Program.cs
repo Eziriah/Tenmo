@@ -114,6 +114,23 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 3)//view pending(only what has been requested from other users) 
                 {
+                    List<Transaction> pendingTransactions = accountService.GetPendingTransactions();
+                    Console.WriteLine("Pending ID:   Transfers from:   Amount:");
+                    //printing transactions one at a time
+                    foreach (Transaction transaction in pendingTransactions)
+                    {
+                        Console.WriteLine($"{transaction.TransferId}    {transaction.RecipientName}     {transaction.AmountTransfered}\n");
+                    }
+                    int transferInt = consoleService.PromptForTransferID("view");
+                    //checking user input against list of transactions; for a match, will print details
+                    foreach (Transaction transaction in pendingTransactions)
+                    {
+                        if (transaction.TransferId == transferInt)
+                        {
+                            Console.WriteLine($"TransferId: {transaction.TransferId}\nFrom: {transaction.SenderName}\nTo: {transaction.RecipientName}\nAmount Transferred: {transaction.AmountTransfered}\nStatus: {transaction.StatusString}\nType of transfer: {transaction.TypeString} \n");
+                        }
+                    }
+
 
                 }
                 else if (menuSelection == 4) //transfer TE Bucks to other users
@@ -176,6 +193,42 @@ namespace TenmoClient
                 else if (menuSelection == 5)//request money//(list of users, amount to send. move to new pending trans. list)
                 {
                     List<OtherUser> requests = accountService.GetUserList();
+                    Console.WriteLine($"Here are available users:");
+                    foreach (OtherUser users in requests)
+                    {
+                        Console.WriteLine($"{users.UserId}, {users.Username}");
+                    }
+                    //getting user input for recipient user ID, making sure input is valid & matches user in DB
+                    int userInt = consoleService.PromptForUserID("view");
+                    bool userMatch = false;
+                    foreach (OtherUser user in requests)
+                    {
+                        if (user.UserId == userInt.ToString())
+                        {
+                            userMatch = true;
+                        }
+                    }
+                    if (userMatch)
+                    {
+                        decimal requestAmount = consoleService.GetTransferAmount("Enter the amount to be requested");
+                        //check to make sure positive
+                        if (requestAmount > 0 )
+                        {
+                            Transfer transfer = new Transfer();
+                            transfer.UserIdToReceive = userInt;
+                            transfer.AmountToTransfer = requestAmount;
+                            accountService.RequestTEBucks(transfer);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Request amount must be greater than $0.00");
+                        }
+                 
+                    }
+                    else
+                    {
+
+                    }
                 }
                 else if (menuSelection == 6)
                 {
