@@ -37,7 +37,8 @@ namespace TenmoServer.Controllers
         [HttpGet("userslist")]
         public List<User> ListUsers()
         {
-            return userDao.GetUsersNameAndId();
+            string username = User.Identity.Name;
+            return userDao.GetUsersNameAndId(username);
         }
 
         [Authorize]

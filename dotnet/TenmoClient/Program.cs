@@ -107,8 +107,10 @@ namespace TenmoClient
                     {
                         Console.WriteLine($"{users.UserId}, {users.Username}");
                     }
+                    //TODO: make sure user ID valid
                     Console.WriteLine("Please enter user Id you wish to transfer to: ");
                     string userIdToTransferTo = Console.ReadLine();
+                    //TODO: make sure amt is valid
                     Console.WriteLine("Enter the amount to be transferred");
                     string transferAmount =  Console.ReadLine();
  
@@ -117,7 +119,7 @@ namespace TenmoClient
                     
                     transfer.UserIdToReceive = int.Parse(userIdToTransferTo);
                     transfer.AmountToTransfer = Convert.ToDecimal(transferAmount);
-                    accountService.TransferTEBucks();
+                    accountService.TransferTEBucks(transfer);
                     //,aybe we can mimic a list of users the user can select from and have a readkey 
 
                 }
