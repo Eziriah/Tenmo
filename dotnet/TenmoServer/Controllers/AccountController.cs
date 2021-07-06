@@ -49,7 +49,6 @@ namespace TenmoServer.Controllers
         public bool TransferTEBucks(Transfer transfer)
         {
             int userId = int.Parse(User.FindFirst("sub")?.Value);
-
             bool result = accountDao.TransferTEBucks(userId, transfer.UserIdToReceive, transfer.AmountToTransfer);
             return result;
         }

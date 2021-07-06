@@ -121,17 +121,28 @@ namespace TenmoClient
                     {
                         Console.WriteLine($"{transaction.TransferId}    {transaction.RecipientName}     {transaction.AmountTransfered}\n");
                     }
-                    int transferInt = consoleService.PromptForTransferID("view");
+                    //"please enter transfer ID to approve/reject"
+                    int transferInt = consoleService.PromptForTransferID("approve or reject");
                     //checking user input against list of transactions; for a match, will print details
                     foreach (Transaction transaction in pendingTransactions)
                     {
                         if (transaction.TransferId == transferInt)
                         {
-                            Console.WriteLine($"TransferId: {transaction.TransferId}\nFrom: {transaction.SenderName}\nTo: {transaction.RecipientName}\nAmount Transferred: {transaction.AmountTransfered}\nStatus: {transaction.StatusString}\nType of transfer: {transaction.TypeString} \n");
+                            int pendingInput = consoleService.PendingInput("1: Approve\n2: Reject\n0: Don't approve or reject");
+                            if(pendingInput == 1 )
+                            {
+                                //need a method that will update pending to accepted
+                                Transfer transfer = new Transfer();
+                                transfer.AmountToTransfer = transaction.AmountTransfered;
+                                transfer.UserIdToReceive = transaction.AccountFrom;
+                                accountService.TransferTEBucks(transfer);
+                            }
+                            else if (pendingInput == 2)
+                            {
+                                //we need to create server-side PUT method for rejected
+                            }
                         }
                     }
-
-
                 }
                 else if (menuSelection == 4) //transfer TE Bucks to other users
                 {
@@ -188,7 +199,6 @@ namespace TenmoClient
                     {
                         Console.WriteLine("Sorry, user ID invalid");
                     }
-
                 }
                 else if (menuSelection == 5)//request money//(list of users, amount to send. move to new pending trans. list)
                 {

@@ -23,7 +23,6 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     SqlCommand cmd = new SqlCommand("SELECT balance FROM accounts a JOIN users u ON u.user_id = a.user_id WHERE u.user_id = @userId", conn);
                     cmd.Parameters.AddWithValue("@userId", userId);
                     decimal balance = Convert.ToDecimal(cmd.ExecuteScalar());
@@ -32,10 +31,8 @@ namespace TenmoServer.DAO
             }
             catch (Exception)
             {
-
                 throw;
             }
-
         }
         //creating method for transferring money
         public bool TransferTEBucks(int userIdToSend, int userIdToReceive, decimal amountToTransfer)
@@ -47,11 +44,9 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     decimal currentBalance = GetBalance(userIdToSend);
                     if (currentBalance >= amountToTransfer)
                     {
-
                         SqlCommand cmd = new SqlCommand("BEGIN TRANSACTION; " +
                                                         "UPDATE accounts SET balance = balance - @amountToTransfer " +
                                                         "WHERE user_id = @userIdToSend; " +
@@ -73,7 +68,6 @@ namespace TenmoServer.DAO
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine(ex.Message);
                 throw;
             }
@@ -89,16 +83,12 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     AddTransaction(userIdToSend, userIdToReceive, amountToTransfer, transferType, transferStatus);
-
                 }
-                
                 return true;//"Successful Transfer"; 
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine(ex.Message);
                 throw;
             }
@@ -111,7 +101,6 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     SqlCommand cmd = new SqlCommand("INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                                                             "VALUES(@transferType, @transferStatus, (SELECT account_id FROM accounts WHERE user_id = @userIdToSend), " +
                                                             "(SELECT account_id FROM accounts WHERE user_id = @userIdToReceive), @amountToTransfer); ", conn);
@@ -125,7 +114,6 @@ namespace TenmoServer.DAO
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -138,7 +126,6 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     SqlCommand cmd = new SqlCommand("SELECT t.transfer_id, t.transfer_type_id, t.transfer_status_id, t.account_from, t.account_to, t.amount, u.username AS sender_username, us.username AS recipient_username " +
                                                     "FROM transfers t " +
                                                     "JOIN accounts a ON t.account_from = a.account_id " +
@@ -148,7 +135,6 @@ namespace TenmoServer.DAO
                                                     "WHERE account_from = (SELECT account_id FROM accounts WHERE user_id = @userId) OR account_to = (SELECT account_id FROM accounts WHERE user_id = @userId); ", conn);
                     cmd.Parameters.AddWithValue("@userId", userId);
                     SqlDataReader reader = cmd.ExecuteReader();
-
                     while (reader.Read())
                     {
                         {
@@ -163,7 +149,6 @@ namespace TenmoServer.DAO
                                 RecipientName = Convert.ToString(reader["recipient_username"]),
                                 TransferId = Convert.ToInt32(reader["transfer_id"])
                             };
-
                             allTransactions.Add(transaction);
                         }
                     }
@@ -174,12 +159,7 @@ namespace TenmoServer.DAO
             {
                 throw;
             }
-
-
-
         }
-
-
 
         public List<Transaction> PendingTransactions(int userId)//based on transfer type id 
         {
@@ -189,7 +169,6 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     SqlCommand cmd = new SqlCommand("SELECT t.transfer_id, t.transfer_type_id, t.transfer_status_id, t.account_from, t.account_to, t.amount, u.username AS sender_username, us.username AS recipient_username " +
                                                     "FROM transfers t " +
                                                     "JOIN accounts a ON t.account_from = a.account_id " +
@@ -215,7 +194,6 @@ namespace TenmoServer.DAO
                                 RecipientName = Convert.ToString(reader["recipient_username"]),
                                 TransferId = Convert.ToInt32(reader["transfer_id"])
                             };
-
                             pendingTransactions.Add(transaction);
                         }
                     }

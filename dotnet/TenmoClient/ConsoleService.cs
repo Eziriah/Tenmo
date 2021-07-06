@@ -54,6 +54,20 @@ namespace TenmoClient
             }
         }
 
+        public int PendingInput(string action)
+        {
+            Console.WriteLine(action);
+            if (!int.TryParse(Console.ReadLine(), out int pendingInput))
+            {
+                Console.WriteLine("Invalid amount. Only input a number.");
+                return 0;
+            }
+            else
+            {
+                return pendingInput;
+            }
+        }
+
         public LoginUser PromptForLogin()
         {
             Console.Write("Username: ");
