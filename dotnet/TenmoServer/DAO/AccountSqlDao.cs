@@ -35,10 +35,8 @@ namespace TenmoServer.DAO
             }
         }
         //creating method for transferring money
-        public bool TransferTEBucks(int userIdToSend, int userIdToReceive, decimal amountToTransfer)
+        public bool TransferTEBucks(int userIdToSend, int userIdToReceive, decimal amountToTransfer, int transferType)
         {
-            int transferType = 2;
-            int transferStatus = 2;
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -63,7 +61,6 @@ namespace TenmoServer.DAO
                         return false;// "You don't have enough TE Bucks to make this transfer!";
                     }
                 }
-                AddTransaction(userIdToSend, userIdToReceive, amountToTransfer, transferType, transferStatus);
                 return true;//"Successful Transfer"; 
             }
             catch (Exception ex)
@@ -101,15 +98,17 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand("INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
-                                                            "VALUES(@transferType, @transferStatus, (SELECT account_id FROM accounts WHERE user_id = @userIdToSend), " +
-                                                            "(SELECT account_id FROM accounts WHERE user_id = @userIdToReceive), @amountToTransfer); ", conn);
-                    cmd.Parameters.AddWithValue("@userIdToSend", userIdToSend);
-                    cmd.Parameters.AddWithValue("@userIdToReceive", userIdToReceive);
-                    cmd.Parameters.AddWithValue("@amountToTransfer", amountToTransfer);
-                    cmd.Parameters.AddWithValue("@transferType", transferType);
-                    cmd.Parameters.AddWithValue("@transferStatus", transferStatus);
-                    cmd.ExecuteNonQuery();
+
+                        SqlCommand cmd = new SqlCommand("INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                                                 "VALUES(@transferType, @transferStatus, (SELECT account_id FROM accounts WHERE user_id = @userIdToSend), " +
+                                                 "(SELECT account_id FROM accounts WHERE user_id = @userIdToReceive), @amountToTransfer); ", conn);
+                        cmd.Parameters.AddWithValue("@userIdToSend", userIdToSend);
+                        cmd.Parameters.AddWithValue("@userIdToReceive", userIdToReceive);
+                        cmd.Parameters.AddWithValue("@amountToTransfer", amountToTransfer);
+                        cmd.Parameters.AddWithValue("@transferType", transferType);
+                        cmd.Parameters.AddWithValue("@transferStatus", transferStatus);
+                        cmd.ExecuteNonQuery();
+         
                 }
             }
             catch (Exception)
@@ -117,6 +116,38 @@ namespace TenmoServer.DAO
                 throw;
             }
         }
+
+        public bool UpdateTransaction(int transferId, int userIdToSend, int userIdToReceive, decimal amountToTransfer, int transferType, int transferStatus)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("UPDATE transfers SET transfer_type_id = @transferType, transfer_status_id = @transferStatus, " +
+                        "account_from = @userIdToSend, " +
+                        "account_to =  (SELECT account_id FROM accounts WHERE user_id = @userIdToReceive), amount = @amountToTransfer " +
+                        "WHERE transfer_id = @transferId", conn);
+                    cmd.Parameters.AddWithValue("@transferId", transferId);
+                    cmd.Parameters.AddWithValue("@userIdToSend", userIdToSend);
+                    cmd.Parameters.AddWithValue("@userIdToReceive", userIdToReceive);
+                    cmd.Parameters.AddWithValue("@amountToTransfer", amountToTransfer);
+                    cmd.Parameters.AddWithValue("@transferType", transferType);
+                    cmd.Parameters.AddWithValue("@transferStatus", transferStatus);
+                    cmd.ExecuteNonQuery();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    //    SqlCommand cmd = new SqlCommand("UPDATE transfers SET transfer_type_id = @transferType, transfer_status_id = @transferStatus, " +
+    //"account_from = (SELECT account_id FROM accounts WHERE user_id = @userIdToSend), " +
+    //"account_to = (SELECT account_id FROM accounts WHERE user_id = @userIdToReceive), amount = @amountToTransfer " +
+    //"WHERE transfer_id = @transferId", conn);
 
         public List<Transaction> DisplayTransactions(int userId)// we could possibly use this list to pull our pending transactions as well with transfer type id 
         {

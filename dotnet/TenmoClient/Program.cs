@@ -129,17 +129,20 @@ namespace TenmoClient
                         if (transaction.TransferId == transferInt)
                         {
                             int pendingInput = consoleService.PendingInput("1: Approve\n2: Reject\n0: Don't approve or reject");
-                            if(pendingInput == 1 )
+                            Transfer transfer = new Transfer();
+                            transfer.UserIdToSend = transaction.AccountFrom;
+                            transfer.AmountToTransfer = transaction.AmountTransfered;
+                            transfer.UserIdToReceive = transaction.AccountTo;
+                            transfer.TransferId = transaction.TransferId;
+                            if (pendingInput == 1 )
                             {
                                 //need a method that will update pending to accepted
-                                Transfer transfer = new Transfer();
-                                transfer.AmountToTransfer = transaction.AmountTransfered;
-                                transfer.UserIdToReceive = transaction.AccountFrom;
-                                accountService.TransferTEBucks(transfer);
+
+                                accountService.ApprovePending(transfer);
                             }
                             else if (pendingInput == 2)
                             {
-                                //we need to create server-side PUT method for rejected
+                                accountService.RejectPending(transfer);
                             }
                         }
                     }

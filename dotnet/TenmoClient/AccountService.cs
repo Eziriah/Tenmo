@@ -139,6 +139,74 @@ namespace TenmoClient
 
             }
 
+        //approving pending transaction
+        public bool ApprovePending(Transfer transfer)
+        {
+
+            RestRequest request = new RestRequest(API_BASE_URL + "account/transfer/approve");
+            request.AddJsonBody(transfer);
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            IRestResponse<bool> response = client.Put<bool>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                Console.WriteLine("An error occurred communicating with the server.");
+
+                return false;
+            }
+            else if (!response.IsSuccessful)
+            {
+                if (response == null)
+                {
+                    Console.WriteLine("An error message was received: " + response);
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("An error response was received from the server. The status code is " + (int)response.StatusCode);
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+
+        //rejecting pending transaction
+        public bool RejectPending(Transfer transfer)
+        {
+
+            RestRequest request = new RestRequest(API_BASE_URL + "account/transfer/reject");
+            request.AddJsonBody(transfer);
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            IRestResponse<bool> response = client.Put<bool>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                Console.WriteLine("An error occurred communicating with the server.");
+
+                return false;
+            }
+            else if (!response.IsSuccessful)
+            {
+                if (response == null)
+                {
+                    Console.WriteLine("An error message was received: " + response);
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("An error response was received from the server. The status code is " + (int)response.StatusCode);
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+
         public List<Transaction> GetTransactions()
         {
             RestRequest request = new RestRequest(API_BASE_URL + "account" + "/" + "transfer");
