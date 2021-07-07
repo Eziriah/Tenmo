@@ -48,11 +48,16 @@ namespace TenmoServer.Controllers
         [HttpPut("transfer")]
         public bool TransferTEBucks(Transfer transfer)
         {
+            bool result = false;
             int userId = int.Parse(User.FindFirst("sub")?.Value);
             int transferType = 2; //this is for "send" type
             int transferStatus = 2;
-            bool result = accountDao.TransferTEBucks(userId, transfer.UserIdToReceive, transfer.AmountToTransfer, transferType);
-            accountDao.AddTransaction(userId, transfer.UserIdToReceive, transfer.AmountToTransfer, transferType, transferStatus);
+            bool success = accountDao.TransferTEBucks(userId, transfer.UserIdToReceive, transfer.AmountToTransfer, transferType);
+            if (success)
+            {
+                accountDao.AddTransaction(userId, transfer.UserIdToReceive, transfer.AmountToTransfer, transferType, transferStatus);
+                result = true;
+            }
             return result;
         }
 
@@ -61,11 +66,16 @@ namespace TenmoServer.Controllers
         [HttpPut("transfer/approve")]
         public bool ApproveRequest(Transfer transfer)
         {
+            bool result = false;
             int userId = int.Parse(User.FindFirst("sub")?.Value);
             int transferType = 1; //this is for "request" type
             int transferStatus = 2;
-            accountDao.TransferTEBucks(userId, transfer.UserIdToReceive, transfer.AmountToTransfer, transferType);
-            bool result = accountDao.UpdateTransaction(transfer.TransferId,transfer.UserIdToReceive, userId, transfer.AmountToTransfer, transferType, transferStatus);
+            bool success = accountDao.TransferTEBucks(userId, transfer.UserIdToReceive, transfer.AmountToTransfer, transferType);
+            if (success)
+            {
+                result = accountDao.UpdateTransaction(transfer.TransferId, transfer.UserIdToReceive, userId, transfer.AmountToTransfer, transferType, transferStatus);
+            }
+            
             return result ;
         }
 
